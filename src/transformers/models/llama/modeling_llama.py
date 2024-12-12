@@ -680,8 +680,11 @@ class LlamaFlexAttention(LlamaAttention):
             return score
         def causal_mask(score, b, h, q_idx, kv_idx):
             return torch.where(q_idx >= kv_idx, score, -float("inf"))
+        flex_attention = torch.compile(flex_attention)
 
-        attn_output = flex_attention(query_states, key_states, value_states, score_mod=causal_mask if q_len > 1 else noop, return_lse=output_attentions)
+        # attn_output = flex_attention(query_states, key_states, value_states, score_mod=causal_mask if q_len > 1 else noop, return_lse=output_attentions)
+        attn_output = flex_attention(query_states, key_states, value_states, score_mod=causal_mask if q_len > 1 else noop)
+        
         attn_weights = None
         if output_attentions:
             attn_output = attn_output[0]
