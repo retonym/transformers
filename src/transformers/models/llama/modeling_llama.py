@@ -670,10 +670,11 @@ class LlamaFlexAttention(LlamaAttention):
         key_states = repeat_kv(key_states, self.num_key_value_groups)
         value_states = repeat_kv(value_states, self.num_key_value_groups)
 
-        if query_states.device.type == "cuda" and causal_mask is not None:
-            query_states = query_states.contiguous()
-            key_states = key_states.contiguous()
-            value_states = value_states.contiguous()
+        # assume cuda also does not need contiguous in flex_attention
+        # if query_states.device.type == "cuda" and causal_mask is not None:
+        #     query_states = query_states.contiguous()
+        #     key_states = key_states.contiguous()
+        #     value_states = value_states.contiguous()
 
         from torch.nn.attention.flex_attention import flex_attention, create_block_mask
         def noop(score, b, h, q_idx, kv_idx):
@@ -749,10 +750,11 @@ class LlamaPagedAttention(LlamaAttention):
         key_states = repeat_kv(key_states, self.num_key_value_groups)
         value_states = repeat_kv(value_states, self.num_key_value_groups)
 
-        if query_states.device.type == "cuda" and causal_mask is not None:
-            query_states = query_states.contiguous()
-            key_states = key_states.contiguous()
-            value_states = value_states.contiguous()
+        # assume cuda also does not need contiguous in paged_attention
+        # if query_states.device.type == "cuda" and causal_mask is not None:
+        #     query_states = query_states.contiguous()
+        #     key_states = key_states.contiguous()
+        #     value_states = value_states.contiguous()
 
         from torch.nn.attention.flex_attention import flex_attention, create_block_mask
         def noop(score, b, h, q_idx, kv_idx):
